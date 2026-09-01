@@ -10,7 +10,7 @@
     {                                                                          \
       Serial.printf(                                                           \
         "FATAL_ERROR\nin function: %s\nin location: %s:%d:\n" fmt "\n",        \
-        __PRETTY_FUNCTION__, __FILE__, __LINE__, __VA_ARGS__);                 \
+        __PRETTY_FUNCTION__, __FILE__, __LINE__ __VA_OPT__(,) __VA_ARGS__);    \
       Serial.flush();                                                          \
       ESP.restart();                                                           \
     }                                                                          \
