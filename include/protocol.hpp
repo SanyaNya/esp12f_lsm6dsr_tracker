@@ -61,6 +61,7 @@ static_assert(sizeof(HandshakePacketOut) == 1+1+4+sizeof(HANDSHAKE_MAGIC)-1+6);
 
 struct RotationPacket
 {
+#if !IMUCAL_RECORDING
   std::uint8_t  packet_type_padding;
   std::uint8_t  packet_type;
   std::uint32_t packet_number;
@@ -68,6 +69,13 @@ struct RotationPacket
   float y;
   float z;
   float w;
+#else
+  std::uint32_t packet_number;
+  std::uint32_t timestamp_us;
+  int16_t gyr[3];
+  int16_t acc[3];
+  int16_t temp;
+#endif
 };
 static_assert(sizeof(RotationPacket) == 22);
 

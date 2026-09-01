@@ -104,6 +104,16 @@ public:
   };
   static_assert(sizeof(Sample) == 12);
 
+  struct SampleWithTemp
+  {
+    static constexpr uint8_t addr = 0x22;
+
+    std::int16_t gyr[3];
+    std::int16_t acc[3];
+    std::int16_t temp;
+  };
+  static_assert(sizeof(SampleWithTemp) == 14);
+
   LSM6DSR(std::uint8_t addr, Pin sda, Pin scl, std::uint32_t freq) :
     m_bus(addr, sda, scl, freq),
     m_vqf(1.0/208.0)
@@ -127,6 +137,11 @@ public:
   Sample read_sample()
   {
     return read_reg<Sample>();
+  }
+
+  SampleWithTemp read_sample_with_temp()
+  {
+    return read_reg<SampleWithTemp>();
   }
 
   void read_quat(vqf_real_t q[4])
