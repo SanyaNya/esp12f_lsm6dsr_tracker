@@ -16,5 +16,5 @@
     }                                                                          \
   } while(0)
 #else
-#define ERROR_CHECK(expr, msg) do {} while(0)
+#define ERROR_CHECK(expr, msg) do { if(!(expr)) __builtin_unreachable(); } while(0)
 #endif
