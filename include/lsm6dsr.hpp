@@ -1,7 +1,9 @@
 #pragma once
 
 #include <cstring>
+#include <numbers>
 #include "bus.hpp"
+#include "vqf.hpp"
 
 namespace zt
 {
@@ -9,6 +11,13 @@ namespace zt
 class LSM6DSR
 {
   Bus m_bus;
+  VQF m_vqf;
+
+  static constexpr vqf_real_t gravity = 9.80665;
+  static constexpr vqf_real_t gsens = 1000.0 / 35.0;
+  static constexpr vqf_real_t asens = 1000.0 / 0.122;
+  static constexpr vqf_real_t gscale = ((32768. / gsens) / 32768.) * (std::numbers::pi / 180.0);
+  static constexpr vqf_real_t ascale = gravity / asens;
 
   enum ODR : std::uint8_t
   {
@@ -96,7 +105,8 @@ public:
   static_assert(sizeof(Sample) == 12);
 
   LSM6DSR(std::uint8_t addr, Pin sda, Pin scl, std::uint32_t freq) :
-    m_bus(addr, sda, scl, freq)
+    m_bus(addr, sda, scl, freq),
+    m_vqf(1.0/208.0)
   {
     //Reboot IMU
     write_reg<RegCtrl3C>({.sw_reset = 1});
@@ -117,6 +127,16 @@ public:
   Sample read_sample()
   {
     return read_reg<Sample>();
+  }
+
+  void read_quat(vqf_real_t q[4])
+  {
+    const auto sample = read_sample();
+    const vqf_real_t gyr[3] = { vqf_real_t(sample.gyr[0])*gscale, vqf_real_t(sample.gyr[1])*gscale, vqf_real_t(sample.gyr[2])*gscale };
+    const vqf_real_t acc[3] = { vqf_real_t(sample.acc[0])*ascale, vqf_real_t(sample.acc[1])*ascale, vqf_real_t(sample.acc[2])*ascale };
+    m_vqf.update(gyr, acc);
+
+    m_vqf.getQuat6D(q);
   }
 };
 

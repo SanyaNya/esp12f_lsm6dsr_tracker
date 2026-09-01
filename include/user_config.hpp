@@ -1,13 +1,15 @@
 #pragma once
 
 /* ------------------------------- Wi-Fi ---------------------------------- */
-#define WIFI_SSID       "YOUR_SSID"
-#define WIFI_PASSWORD   "YOUR_PASSWORD"
+#define WIFI_SSID       ""
+#define WIFI_PASSWORD   ""
 
 /* ------------------------------ Network --------------------------------- */
 #define SERVER_PORT             6969
-#define HANDSHAKE_RETRY_MS      500
-#define HANDSHAKE_MAGIC         "ZT_SERVER_HELLO"
+#define PACKET_TYPE_HANDSHAKE   3
+#define PACKET_TYPE_ROTATION    17
+#define HANDSHAKE_RETRY_MS      100
+#define HANDSHAKE_MAGIC         "Hey OVR =D 5"
 
 /* ------------------------------- I2C ------------------------------------ */
 #define I2C_SPEED 1'000'000 // 1MHZ
