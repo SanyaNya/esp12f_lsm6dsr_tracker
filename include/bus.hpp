@@ -43,7 +43,7 @@ public:
     if constexpr(sizeof(T) > 1)
       Wire.write(reinterpret_cast<const char*>(&t), sizeof(T));
     else
-      Wire.write(reinterpret_cast<std::uint8_t*>(&t)[0]);
+      Wire.write(reinterpret_cast<const std::uint8_t*>(&t)[0]);
     ret = Wire.endTransmission();
 
     ERROR_CHECK(ret == 0, "[Bus] Failed to write with reg: %02X and size: %u", reg, sizeof(T));

@@ -1,0 +1,3 @@
+[submodule "vqf"]
+	path = vqf
+	url = https://github.com/dlaidig/vqf
