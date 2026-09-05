@@ -59,5 +59,4 @@ void loop()
     });
   #endif
   }
-  yield();
 }
