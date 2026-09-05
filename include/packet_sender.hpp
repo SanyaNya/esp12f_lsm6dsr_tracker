@@ -21,9 +21,7 @@ class PacketSender
   static inline std::uint8_t m_buf[sizeof(T)];
 
 public:
-  PacketSender() = default;
-
-  PacketSender(ip_addr_t ip)
+  void begin(ip_addr_t ip)
   {
     err_t ret;
 
@@ -42,11 +40,8 @@ public:
 
   void send(const T& t)
   {
-    err_t ret;
-
     std::memcpy(m_buf, &t, sizeof(T));
-    ret = udp_send(m_udp, m_pbuf);
-    //ERROR_CHECK(ret == ERR_OK, "Failed to send, err_t: %d", ret);
+    udp_send(m_udp, m_pbuf);
   }
 };
 

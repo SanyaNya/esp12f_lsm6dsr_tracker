@@ -18,9 +18,10 @@ class Bus
   }
 
 public:
-  Bus(std::uint8_t addr, Pin sda, Pin scl, std::uint32_t freq) :
-    m_addr(addr)
+  void begin(std::uint8_t addr, Pin sda, Pin scl, std::uint32_t freq)
   {
+    m_addr = addr;
+
     Wire.begin(sda, scl);
     Wire.setClock(freq);
 

@@ -6,8 +6,7 @@
 #include "server_discovery.hpp"
 #include "packet_sender.hpp"
 
-zt::LSM6DSR g_imu(IMU_I2C_ADDRESS, PIN_IMU_SDA, PIN_IMU_SCL, I2C_SPEED);
-ip_addr_t g_server_ip;
+zt::LSM6DSR g_imu;
 zt::PacketSender<zt::RotationPacket> g_packet_sender;
 std::uint32_t g_packet_number = 0;
 
@@ -19,13 +18,17 @@ void setup()
 
   pinMode(LED_BUILTIN, OUTPUT);
 
+  g_imu.begin(IMU_I2C_ADDRESS, PIN_IMU_SDA, PIN_IMU_SCL, I2C_SPEED);
+  Serial.println("IMU initialized!");
+
   zt::wifi_init();
   Serial.println("Connected to WiFi!");
 
-  g_server_ip = zt::server_discovery();
+  ip_addr_t server_ip = zt::server_discovery();
   Serial.println("Connected to the server!");
 
-  g_packet_sender = zt::PacketSender<zt::RotationPacket>(g_server_ip);
+  g_packet_sender.begin(server_ip);
+  Serial.println("Init complete!");
 }
 
 void loop()

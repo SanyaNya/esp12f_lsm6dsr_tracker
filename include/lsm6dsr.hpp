@@ -11,7 +11,7 @@ namespace zt
 class LSM6DSR
 {
   Bus m_bus;
-  VQF m_vqf;
+  VQF m_vqf{1.0/208.0};
 
   static constexpr vqf_real_t gravity = 9.80665;
   static constexpr vqf_real_t gsens = 1000.0 / 35.0;
@@ -114,10 +114,10 @@ public:
   };
   static_assert(sizeof(SampleWithTemp) == 14);
 
-  LSM6DSR(std::uint8_t addr, Pin sda, Pin scl, std::uint32_t freq) :
-    m_bus(addr, sda, scl, freq),
-    m_vqf(1.0/208.0)
+  void begin(std::uint8_t addr, Pin sda, Pin scl, std::uint32_t freq)
   {
+    m_bus.begin(addr, sda, scl, freq);
+
     //Reboot IMU
     write_reg<RegCtrl3C>({.sw_reset = 1});
     delay(20);
