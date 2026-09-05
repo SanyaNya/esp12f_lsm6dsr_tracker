@@ -1,6 +1,11 @@
 #pragma once
 
 #include <Arduino.h>
+#include "user_config.hpp"
+
+#if !DISABLE_ERROR_HANDLING && DISABLE_LOGGING
+#error "Logging must be enabled for error handling"
+#endif
 
 #if !DISABLE_ERROR_HANDLING
 #define ERROR_CHECK(expr, fmt, ...)                                            \

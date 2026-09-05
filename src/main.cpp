@@ -1,34 +1,34 @@
 #include <Arduino.h>
 #include "user_config.hpp"
+#include "logger.hpp"
 #include "lsm6dsr.hpp"
 #include "wifi.hpp"
 #include "protocol.hpp"
 #include "server_discovery.hpp"
 #include "packet_sender.hpp"
 
+zt::Logger g_logger;
 zt::LSM6DSR g_imu;
 zt::PacketSender<zt::RotationPacket> g_packet_sender;
 std::uint32_t g_packet_number = 0;
 
 void setup()
 {
-  Serial.begin(SERIAL_BAUD_RATE);
-  delay(500);
-  Serial.println("\n=== ESP-12F LSM6DSR Tracker ===");
+  g_logger.begin();
 
   pinMode(LED_BUILTIN, OUTPUT);
 
   g_imu.begin(IMU_I2C_ADDRESS, PIN_IMU_SDA, PIN_IMU_SCL, I2C_SPEED);
-  Serial.println("IMU initialized!");
+  g_logger.println("IMU initialized!");
 
   zt::wifi_init();
-  Serial.println("Connected to WiFi!");
+  g_logger.println("Connected to WiFi!");
 
   ip_addr_t server_ip = zt::server_discovery();
-  Serial.println("Connected to the server!");
+  g_logger.println("Connected to the server!");
 
   g_packet_sender.begin(server_ip);
-  Serial.println("Init complete!");
+  g_logger.println("Init complete!");
 }
 
 void loop()
