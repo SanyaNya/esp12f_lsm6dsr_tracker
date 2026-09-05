@@ -53,9 +53,9 @@ void loop()
     {
       .packet_number = ++g_packet_number,
       .timestamp_us = timestamp_us,
+      .temp = sample.temp,
       .gyr = { sample.gyr[0], sample.gyr[1], sample.gyr[2] },
-      .acc = { sample.acc[0], sample.acc[1], sample.acc[2] },
-      .temp = sample.temp
+      .acc = { sample.acc[0], sample.acc[1], sample.acc[2] }
     });
   #endif
   }

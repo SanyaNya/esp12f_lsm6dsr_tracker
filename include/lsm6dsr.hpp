@@ -106,11 +106,11 @@ public:
 
   struct SampleWithTemp
   {
-    static constexpr uint8_t addr = 0x22;
+    static constexpr uint8_t addr = 0x20;
 
+    std::int16_t temp;
     std::int16_t gyr[3];
     std::int16_t acc[3];
-    std::int16_t temp;
   };
   static_assert(sizeof(SampleWithTemp) == 14);
 
