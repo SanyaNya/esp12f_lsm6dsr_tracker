@@ -3,7 +3,11 @@
 #include <cstring>
 #include <numbers>
 #include "bus.hpp"
+#include "calibration/Calibration.hpp"
 #include "vqf.hpp"
+#if !IMUCAL_RECORDING
+#include CALIBRATION_HEADER
+#endif
 
 namespace zt
 {
@@ -12,12 +16,6 @@ class LSM6DSR
 {
   Bus m_bus;
   VQF m_vqf{1.0/208.0};
-
-  static constexpr vqf_real_t gravity = 9.80665;
-  static constexpr vqf_real_t gsens = 1000.0 / 35.0;
-  static constexpr vqf_real_t asens = 1000.0 / 0.122;
-  static constexpr vqf_real_t gscale = ((32768. / gsens) / 32768.) * (std::numbers::pi / 180.0);
-  static constexpr vqf_real_t ascale = gravity / asens;
 
   enum ODR : std::uint8_t
   {
@@ -144,15 +142,21 @@ public:
     return read_reg<SampleWithTemp>();
   }
 
+#if !IMUCAL_RECORDING
   void read_quat(vqf_real_t q[4])
   {
-    const auto sample = read_sample();
-    const vqf_real_t gyr[3] = { vqf_real_t(sample.gyr[0])*gscale, vqf_real_t(sample.gyr[1])*gscale, vqf_real_t(sample.gyr[2])*gscale };
-    const vqf_real_t acc[3] = { vqf_real_t(sample.acc[0])*ascale, vqf_real_t(sample.acc[1])*ascale, vqf_real_t(sample.acc[2])*ascale };
-    m_vqf.update(gyr, acc);
+    const auto s = read_sample();
+
+    const CalibratedSample calib =
+      g_this_tracker_calibration.apply(
+        {real_t(s.gyr[0]), real_t(s.gyr[1]), real_t(s.gyr[2])},
+        {real_t(s.acc[0]), real_t(s.acc[1]), real_t(s.acc[2])});
+
+    m_vqf.update(calib.gyr, calib.acc);
 
     m_vqf.getQuat6D(q);
   }
+#endif
 };
 
 } //namespace zt
