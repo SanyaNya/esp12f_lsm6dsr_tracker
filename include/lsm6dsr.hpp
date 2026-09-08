@@ -12,10 +12,28 @@
 namespace zt
 {
 
+inline VQFParams get_vqf_params()
+{
+  VQFParams p;
+  p.tauAcc = 4.337983;
+  p.biasSigmaInit = 3.219453;
+  p.biasForgettingTime = 136.579346;
+  p.biasClip = 5.0;
+  p.biasSigmaMotion = 0.348501;
+  p.biasVerticalForgettingFactor = 0.007056;
+  p.biasSigmaRest = 0.063616;
+  p.restMinT = 2.586910;
+  p.restFilterTau = 1.114532;
+  p.restThGyr = 1.399189;
+  p.restThAcc = 1.418598;
+
+  return p;
+}
+
 class LSM6DSR
 {
   Bus m_bus;
-  VQF m_vqf{1.0/208.0};
+  VQF m_vqf{get_vqf_params(), 1.0/208.0};
 
   enum ODR : std::uint8_t
   {
