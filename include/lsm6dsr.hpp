@@ -33,7 +33,7 @@ inline VQFParams get_vqf_params()
 class LSM6DSR
 {
   Bus m_bus;
-  VQF m_vqf{get_vqf_params(), 1.0/208.0};
+  VQF m_vqf{get_vqf_params(), g_this_tracker_calibration.get_dts()};
 
   enum ODR : std::uint8_t
   {
