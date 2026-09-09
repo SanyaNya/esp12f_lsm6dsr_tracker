@@ -141,7 +141,7 @@ public:
     //Configure
     write_reg<RegCtrl1XL>({.fs_xl = FS_4G, .odr_xl = HZ_208});
     write_reg<RegCtrl2G>({.fs_g = FS_1000DPS, .odr_g = HZ_208});
-    write_reg<RegCtrl3C>({.if_inc = 1});
+    write_reg<RegCtrl3C>({.if_inc = 1, .bdu = 1});
   }
 
   bool data_ready()
