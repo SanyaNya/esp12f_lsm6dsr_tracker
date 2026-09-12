@@ -71,7 +71,7 @@ VQF::VQF(const VQFParams &params, vqf_real_t gyrTs, vqf_real_t accTs, vqf_real_t
     setup();
 }
 
-void VQF::updateGyr(const vqf_real_t gyr[3])
+void VQF::updateGyr(const vqf_real_t gyr[3], vqf_real_t dt)
 {
     // rest detection
     if (params.restBiasEstEnabled || params.magDistRejectionEnabled) {
@@ -95,7 +95,7 @@ void VQF::updateGyr(const vqf_real_t gyr[3])
 
     // gyroscope prediction step
     vqf_real_t gyrNorm = norm(gyrNoBias, 3);
-    vqf_real_t angle = gyrNorm * coeffs.gyrTs;
+    vqf_real_t angle = gyrNorm * dt;
     if (gyrNorm > EPS) {
         vqf_real_t c = std::cos(angle/2);
         vqf_real_t s = std::sin(angle/2)/gyrNorm;
@@ -401,51 +401,17 @@ void VQF::updateMag(const vqf_real_t mag[3])
     }
 }
 
-void VQF::update(const vqf_real_t gyr[3], const vqf_real_t acc[3])
+void VQF::update(const vqf_real_t gyr[3], const vqf_real_t acc[3], vqf_real_t dt)
 {
-    updateGyr(gyr);
+    updateGyr(gyr, dt);
     updateAcc(acc);
 }
 
-void VQF::update(const vqf_real_t gyr[3], const vqf_real_t acc[3], const vqf_real_t mag[3])
+void VQF::update(const vqf_real_t gyr[3], const vqf_real_t acc[3], const vqf_real_t mag[3], vqf_real_t dt)
 {
-    updateGyr(gyr);
+    updateGyr(gyr, dt);
     updateAcc(acc);
     updateMag(mag);
-}
-
-void VQF::updateBatch(const vqf_real_t gyr[], const vqf_real_t acc[], const vqf_real_t mag[], size_t N,
-                      vqf_real_t out6D[], vqf_real_t out9D[], vqf_real_t outDelta[], vqf_real_t outBias[],
-                      vqf_real_t outBiasSigma[], bool outRest[], bool outMagDist[])
-{
-    for (size_t i = 0; i < N; i++) {
-        if (mag) {
-            update(gyr+3*i, acc+3*i, mag+3*i);
-        } else {
-            update(gyr+3*i, acc+3*i);
-        }
-        if (out6D) {
-            getQuat6D(out6D+4*i);
-        }
-        if (out9D) {
-            getQuat9D(out9D+4*i);
-        }
-        if (outDelta) {
-            outDelta[i] = state.delta;
-        }
-        if (outBias) {
-            std::copy(state.bias, state.bias+3, outBias+3*i);
-        }
-        if (outBiasSigma) {
-            outBiasSigma[i] = getBiasEstimate(0);
-        }
-        if (outRest) {
-            outRest[i] = state.restDetected;
-        }
-        if (outMagDist) {
-            outMagDist[i] = state.magDistDetected;
-        }
-    }
 }
 
 void VQF::getQuat3D(vqf_real_t out[4]) const

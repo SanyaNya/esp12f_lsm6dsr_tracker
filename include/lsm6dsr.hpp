@@ -163,7 +163,7 @@ public:
   }
 
 #if !IMUCAL_RECORDING
-  void read_quat(vqf_real_t q[4])
+  void read_quat(vqf_real_t q[4], vqf_real_t dt)
   {
     const auto s = read_sample();
 
@@ -172,7 +172,7 @@ public:
         {real_t(s.gyr[0]), real_t(s.gyr[1]), real_t(s.gyr[2])},
         {real_t(s.acc[0]), real_t(s.acc[1]), real_t(s.acc[2])});
 
-    m_vqf.update(calib.gyr, calib.acc);
+    m_vqf.update(calib.gyr, calib.acc, dt);
 
     m_vqf.getQuat6D(q);
   }

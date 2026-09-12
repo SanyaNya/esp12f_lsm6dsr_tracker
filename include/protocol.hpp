@@ -71,7 +71,7 @@ struct RotationPacket
   float w;
 #else
   std::uint32_t packet_number;
-  std::uint32_t timestamp_us;
+  std::uint32_t timestamp_cycles;
   int16_t temp;
   int16_t gyr[3];
   int16_t acc[3];
