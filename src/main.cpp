@@ -12,9 +12,13 @@
 zt::Logger g_logger;
 zt::LSM6DSR g_imu;
 zt::PacketSender<zt::RotationPacket> g_packet_sender;
-std::uint32_t g_packet_number = 0;
+#if IMUCAL_RECORDING
+zt::RotationPacket g_packet{};
+#else
 zt::PreciseTimer g_timer;
 zt::RecursiveLinearRegression g_rls;
+std::uint32_t g_packet_number = 0;
+#endif
 
 void setup()
 {
@@ -53,19 +57,29 @@ void loop()
       .packet_number = g_packet_number,
       .x = float(q[1]), .y = float(q[2]), .z = float(q[3]), .w = float(q[0])
     });
+    ++g_packet_number;
   #else
     const std::uint32_t cycles = ESP.getCycleCount();
     const auto sample = g_imu.read_sample_with_temp();
-    g_packet_sender.send(
-    {
-      .packet_number = g_packet_number,
-      .timestamp_cycles = cycles,
-      .temp = sample.temp,
-      .gyr = { sample.gyr[0], sample.gyr[1], sample.gyr[2] },
-      .acc = { sample.acc[0], sample.acc[1], sample.acc[2] }
-    });
-  #endif
 
-    ++g_packet_number;
+    const std::uint32_t subpacket_idx = g_packet.packet_number % 4;
+
+    ++g_packet.packet_number;
+
+    g_packet.timestamp_cycles[subpacket_idx] = cycles;
+
+    g_packet.temp[subpacket_idx] = sample.temp;
+
+    g_packet.gyr[subpacket_idx][0] = sample.gyr[0];
+    g_packet.gyr[subpacket_idx][1] = sample.gyr[1];
+    g_packet.gyr[subpacket_idx][2] = sample.gyr[2];
+
+    g_packet.acc[subpacket_idx][0] = sample.acc[0];
+    g_packet.acc[subpacket_idx][1] = sample.acc[1];
+    g_packet.acc[subpacket_idx][2] = sample.acc[2];
+
+    if(subpacket_idx+1 == 4)
+      g_packet_sender.send(g_packet);
+  #endif
   }
 }

@@ -71,13 +71,17 @@ struct RotationPacket
   float w;
 #else
   std::uint32_t packet_number;
-  std::uint32_t timestamp_cycles;
-  int16_t temp;
-  int16_t gyr[3];
-  int16_t acc[3];
+  std::uint32_t timestamp_cycles[4];
+  int16_t temp[4];
+  int16_t gyr[4][3];
+  int16_t acc[4][3];
 #endif
 };
+#if !IMUCAL_RECORDING
 static_assert(sizeof(RotationPacket) == 22);
+#else
+static_assert(sizeof(RotationPacket) == 76);
+#endif
 
 #pragma pack(pop)
 
