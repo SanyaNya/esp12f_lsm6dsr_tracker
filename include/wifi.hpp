@@ -14,6 +14,7 @@ void wifi_init()
   WiFi.setOutputPower(20.5);
   WiFi.setPhyMode(WIFI_PHY_MODE_11N);
   WiFi.hostname("ZT Tracker");
+  WiFi.setAutoReconnect(true);
 
 	WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   while(WiFi.status() != WL_CONNECTED) delay(100);
