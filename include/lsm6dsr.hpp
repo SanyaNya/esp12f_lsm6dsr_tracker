@@ -15,7 +15,8 @@ namespace zt
 inline VQFParams get_vqf_params()
 {
   VQFParams p;
-  p.tauAcc                       = g_this_tracker_vqfparams_override.tauAcc;
+  //TODO
+  /*p.tauAcc                       = g_this_tracker_vqfparams_override.tauAcc;
   p.biasForgettingTime           = g_this_tracker_vqfparams_override.biasForgettingTime;
   p.biasClip                     = g_this_tracker_vqfparams_override.biasClip;
   p.biasSigmaMotion              = g_this_tracker_vqfparams_override.biasSigmaMotion;
@@ -24,7 +25,19 @@ inline VQFParams get_vqf_params()
   p.restMinT                     = g_this_tracker_vqfparams_override.restMinT;
   p.restFilterTau                = g_this_tracker_vqfparams_override.restFilterTau;
   p.restThGyr                    = g_this_tracker_vqfparams_override.restThGyr;
-  p.restThAcc                    = g_this_tracker_vqfparams_override.restThAcc;
+  p.restThAcc                    = g_this_tracker_vqfparams_override.restThAcc;*/
+
+  p.tauAcc = 4.337983;
+  p.biasSigmaInit = 3.219453;
+  p.biasForgettingTime = 136.579346;
+  p.biasClip = 5.0;
+  p.biasSigmaMotion = 0.348501;
+  p.biasVerticalForgettingFactor = 0.007056;
+  p.biasSigmaRest = 0.063616;
+  p.restMinT = 2.586910;
+  p.restFilterTau = 1.114532;
+  p.restThGyr = 1.399189;
+  p.restThAcc = 1.418598;
 
   return p;
 }
