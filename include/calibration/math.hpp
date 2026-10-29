@@ -60,7 +60,7 @@ struct vec
     return {-x, -y, -z};
   }
 
-  constexpr vec operator+=(const vec& v) noexcept
+  constexpr vec& operator+=(const vec& v) noexcept
   {
     x += v.x;
     y += v.y;
@@ -69,7 +69,7 @@ struct vec
     return *this;
   }
 
-  constexpr vec operator-=(const vec& v) noexcept
+  constexpr vec& operator-=(const vec& v) noexcept
   {
     x -= v.x;
     y -= v.y;
@@ -78,7 +78,7 @@ struct vec
     return *this;
   }
 
-  constexpr vec operator*=(const T& t) noexcept
+  constexpr vec& operator*=(const T& t) noexcept
   {
     x *= t;
     y *= t;
@@ -87,7 +87,7 @@ struct vec
     return *this;
   }
 
-  constexpr vec operator/=(const T& t) noexcept
+  constexpr vec& operator/=(const T& t) noexcept
   {
     x /= t;
     y /= t;
@@ -122,6 +122,8 @@ struct vec
   {
     return {v1.x-v2.x, v1.y-v2.y, v1.z-v2.z};
   }
+
+  constexpr bool operator==(const vec&) const noexcept = default;
 };
 
 template<std::floating_point T>
@@ -239,7 +241,7 @@ struct quat
   {
     T angle = T(2.0) * std::acos(std::clamp(w, -T(1.0), T(1.0)));
 
-    T s = std::sqrt(std::max(T(0.0), T(1.0) - w*w));
+    T s = std::sqrt((std::max)(T(0.0), T(1.0) - w*w));
 
     if(s < std::numeric_limits<T>::epsilon()) [[unlikely]]
       return {{T(1.0), T(0.0), T(0.0)}, angle};

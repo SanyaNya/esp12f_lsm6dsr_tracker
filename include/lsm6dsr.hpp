@@ -15,17 +15,16 @@ namespace zt
 inline VQFParams get_vqf_params()
 {
   VQFParams p;
-  p.tauAcc = 4.337983;
-  p.biasSigmaInit = 3.219453;
-  p.biasForgettingTime = 136.579346;
-  p.biasClip = 5.0;
-  p.biasSigmaMotion = 0.348501;
-  p.biasVerticalForgettingFactor = 0.007056;
-  p.biasSigmaRest = 0.063616;
-  p.restMinT = 2.586910;
-  p.restFilterTau = 1.114532;
-  p.restThGyr = 1.399189;
-  p.restThAcc = 1.418598;
+  p.tauAcc                       = g_this_tracker_vqfparams_override.tauAcc;
+  p.biasForgettingTime           = g_this_tracker_vqfparams_override.biasForgettingTime;
+  p.biasClip                     = g_this_tracker_vqfparams_override.biasClip;
+  p.biasSigmaMotion              = g_this_tracker_vqfparams_override.biasSigmaMotion;
+  p.biasVerticalForgettingFactor = g_this_tracker_vqfparams_override.biasVerticalForgettingFactor;
+  p.biasSigmaRest                = g_this_tracker_vqfparams_override.biasSigmaRest;
+  p.restMinT                     = g_this_tracker_vqfparams_override.restMinT;
+  p.restFilterTau                = g_this_tracker_vqfparams_override.restFilterTau;
+  p.restThGyr                    = g_this_tracker_vqfparams_override.restThGyr;
+  p.restThAcc                    = g_this_tracker_vqfparams_override.restThAcc;
 
   return p;
 }
@@ -165,12 +164,13 @@ public:
 #if !IMUCAL_RECORDING
   void read_quat(vqf_real_t q[4], vqf_real_t dt)
   {
-    const auto s = read_sample();
+    const auto s = read_sample_with_temp();
 
     const CalibratedSample calib =
       g_this_tracker_calibration.apply(
         {real_t(s.gyr[0]), real_t(s.gyr[1]), real_t(s.gyr[2])},
-        {real_t(s.acc[0]), real_t(s.acc[1]), real_t(s.acc[2])});
+        {real_t(s.acc[0]), real_t(s.acc[1]), real_t(s.acc[2])},
+        25.0 + real_t(s.temp) / 256.0);
 
     m_vqf.update(calib.gyr, calib.acc, dt);
 
